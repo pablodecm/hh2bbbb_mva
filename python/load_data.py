@@ -1,7 +1,7 @@
 
 import numpy as np
 from numpy.lib.recfunctions import stack_arrays, append_fields
-from root_numpy import root2array
+from root_numpy import root2array, rec2array
 # to get cross sections and number of gen events
 from di_higgs.hh2bbbb.samples_25ns import mc_samples
 
@@ -68,11 +68,18 @@ def add_dijet_vars(data, dijet_indices = [(0,1),(2,3)], j_n = "pfjets[{}]"):
                                  data[j_n.format(ids[1])+".Eta()"])
         e_vars[dj_n+".DR()"] = np.sqrt(sum([e_vars[dj_n+c]**2 for c in [".DEta()",
                                                                         ".DPhi()"]]))
-    data = append_fields(data, e_vars.keys(), e_vars.values(), asrecarray=True, usemask=False)
+    data = append_fields(data, e_vars.keys(), e_vars.values(),
+                         asrecarray=True, usemask=False)
     return data
 
 
-                                            
-            
+def add_classifier(data, c_name, classifier, features):
+    """ Add a classifier column to the record array """ 
 
-        
+    # compute discriminator and append to array
+    data_disc = classifier.decision_function(rec2array(data[features]))
+    data = append_fields(data, [c_name], [data_disc],
+                         asrecarray=True, usemask=False)
+
+    return data
+
