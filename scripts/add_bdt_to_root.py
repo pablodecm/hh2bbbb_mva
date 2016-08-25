@@ -13,7 +13,7 @@ import numpy as np
 from sklearn.externals import joblib
 from root_numpy import root2array, rec2array, array2root
 
-bdt_file = '/lustre/cmswork/hh/mvas/old_bdt/bdt.pkl' 
+bdt_file = '/lustre/cmswork/hh/mvas/xgboost/train_3CSVM_0.5sig_0.7bkg_weighted.pkl'
 
 branch_names = ["H1_pT", "H2_pT",
                 "H1_dEta_abs", "H2_dEta_abs",
@@ -27,10 +27,10 @@ for root_file in args.root_files:
     # load vars data from ROOT
     data = root2array(root_file, args.tree_name, branch_names)
 
-    data_bdt = bdt.decision_function(rec2array(data[branch_names]))
+    data_bdt = bdt.predict_proba(rec2array(data[branch_names]))[:,1]
 
     # save to ROOT file
-    data_bdt.dtype = [(args.bdt_name, np.float64)]
+    data_bdt.dtype = [(args.bdt_name, np.float32)]
     array2root(data_bdt, root_file, "tree")
 
 

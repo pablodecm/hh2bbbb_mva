@@ -77,7 +77,7 @@ def add_classifier(data, c_name, classifier, features):
     """ Add a classifier column to the record array """ 
 
     # compute discriminator and append to array
-    data_disc = classifier.decision_function(rec2array(data[features]))
+    data_disc = classifier.predict_proba(rec2array(data[features]))[:,1]
     data = append_fields(data, [c_name], [data_disc],
                          asrecarray=True, usemask=False)
 
